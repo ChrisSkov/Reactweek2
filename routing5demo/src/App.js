@@ -1,30 +1,24 @@
 import React from "react";
 import "./App.css";
-import { Switch, Route, NavLink} from 'react-router-dom';
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  NavLink,
+  Link,
+  useRouteMatch
+} from 'react-router-dom';
 
-function App() {
+function App(props) {
   return (
-    <div>
-      <Header/>
-      <Switch>
-        <Route exact path="/">
-          <Home />
-        </Route>
-        <Route path="/products">
-          <Products />
-        </Route>
-        <Route path="/company">
-          <Company />
-        </Route>
-        <Route path="/add-book">
-          <AddBook />
-        </Route>
-      </Switch>
-    </div>
+    <Router>
+      <Header />
+      <Content bookFactory={props.bookFactory} />
+    </Router>
   );
 }
 const Header = () => {
-  return(
+  return (
     <ul className="header">
       <li>
         <NavLink exact activeClassName="active" to="/">
@@ -49,9 +43,44 @@ const Header = () => {
     </ul>
   );
 };
-
-const Home = () => <div>Home</div>
-const Products = () => <div>Products</div>
-const Company = () => <div>Company</div>
-const AddBook = () => <div>AddBook</div>
+const Content = (props) => {
+  return (
+    <Switch>
+        <Route exact path="/">
+          <Home />
+        </Route>
+        <Route path="/products">
+          <Products bookFactory={props.bookFactory}/>
+        </Route>
+        <Route path="/company">
+          <Company />
+        </Route>
+        <Route path="/add-book">
+          <AddBook />
+        </Route>
+        <Route path="*">
+            <NoMatch />
+        </Route>
+      </Switch>
+  );
+}
+const Home = () => <div>Home</div>;
+const Products = ({bookFactory}) => {
+  console.log(bookFactory.getBooks());
+  return (
+    <table>
+      <thead>
+      <tr><th>ID</th><th>TITLE</th><th>INFO</th></tr>
+    </thead>
+    <tbody>
+      {bookFactory.getBooks().map((book)=>{
+        return <tr><td><Link></Link>{book.id}</td><td>{book.title}</td><td>{book.info}</td></tr>
+      })}
+      </tbody>
+      </table>
+  );
+};
+const Company = () => <div>Company</div>;
+const AddBook = () => <div>Add book</div>;
+const NoMatch = () => <div>Urlen matcher ingen kendte routes</div>;
 export default App;
