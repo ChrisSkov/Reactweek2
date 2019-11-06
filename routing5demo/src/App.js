@@ -6,7 +6,8 @@ import {
   Route,
   NavLink,
   Link,
-  useRouteMatch
+  useRouteMatch,
+  useParams
 } from 'react-router-dom';
 
 function App(props) {
@@ -66,21 +67,33 @@ const Content = (props) => {
 }
 const Home = () => <div>Home</div>;
 const Products = ({bookFactory}) => {
+  let match = useRouteMatch();
   console.log(bookFactory.getBooks());
   return (
-    <table>
+   <div>
+      <table>
       <thead>
       <tr><th>ID</th><th>TITLE</th><th>INFO</th></tr>
     </thead>
     <tbody>
       {bookFactory.getBooks().map((book)=>{
-        return <tr><td><Link></Link>{book.id}</td><td>{book.title}</td><td>{book.info}</td></tr>
+        return <tr><td><Link to={`${match.url}/${book.id}`}>{book.id}</Link></td><td>{book.title}</td><td>{book.info}</td></tr>
       })}
       </tbody>
       </table>
+      <Route path={`${match.path}/:bookId`}>
+        <Book></Book>
+      </Route>
+   </div>
   );
 };
 const Company = () => <div>Company</div>;
 const AddBook = () => <div>Add book</div>;
 const NoMatch = () => <div>Urlen matcher ingen kendte routes</div>;
+const Book = () => {
+  let { bookId } = useParams();
+  return (<div>
+   Book with id: {bookId}
+  </div>);
+};
 export default App;
